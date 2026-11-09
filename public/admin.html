@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Admin - RentalKu Platform Control</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="nav"></div>
+  <main class="container">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h1 style="margin:0;">Dashboard Platform Admin</h1>
+        <p class="muted" style="margin-top:4px;">Kelola verifikasi armada, pantau transaksi pelanggan, ambil komisi platform, dan proses transfer payout mitra.</p>
+      </div>
+      <div>
+        <button class="btn ok" onclick="adminAddVehicleForm()">+ Tambah Armada Platform</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn" data-tab="report">Laporan Keuangan</button>
+      <button class="tab-btn" data-tab="mitra">Verifikasi Mitra <span class="badge b-red hidden" id="cMitra"></span></button>
+      <button class="tab-btn" data-tab="vehicles">Verifikasi Kendaraan <span class="badge b-red hidden" id="cVehicles"></span></button>
+      <button class="tab-btn" data-tab="platform-fleet">Armada Platform</button>
+      <button class="tab-btn" data-tab="orders">Pesanan &amp; Pembayaran</button>
+      <button class="tab-btn" data-tab="payouts">Payout Mitra <span class="badge b-red hidden" id="cPayouts"></span></button>
+      <button class="tab-btn" data-tab="customers">Pelanggan</button>
+      <button class="tab-btn" data-tab="settings">Pengaturan Komisi</button>
+    </div>
+
+    <!-- ===== Laporan keuangan ===== -->
+    <section id="tab-report" class="tab-panel">
+      <div class="toolbar">
+        <div class="field"><label for="rFrom">Dari Tanggal</label><input type="date" id="rFrom"></div>
+        <div class="field"><label for="rTo">Sampai Tanggal</label><input type="date" id="rTo"></div>
+        <button class="btn" onclick="loadReport()">Terapkan Filter</button>
+        <button class="btn ghost" onclick="presetReport('7')">7 Hari Terakhir</button>
+        <button class="btn ghost" onclick="presetReport('month')">Bulan Ini</button>
+        <button class="btn ghost" onclick="presetReport('all')">Semua Transaksi</button>
+      </div>
+      
+      <div class="stats" id="rStats"></div>
+
+      <div class="toolbar" style="margin-bottom:18px;">
+        <button class="btn ok" onclick="exportReport('excel')">📊 Export Excel</button>
+        <button class="btn danger" onclick="exportReport('pdf')">📄 Export PDF</button>
+      </div>
+      
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Waktu Bayar</th>
+              <th>Kode</th>
+              <th>Penyewa</th>
+              <th>Mitra / Armada</th>
+              <th>Unit Kendaraan</th>
+              <th>Metode</th>
+              <th class="right">Total Nilai</th>
+              <th class="right">Komisi Platform</th>
+              <th class="right">Hak Mitra</th>
+            </tr>
+          </thead>
+          <tbody id="rBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== Verifikasi mitra ===== -->
+    <section id="tab-mitra" class="tab-panel hidden">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nama Mitra</th>
+              <th>Kontak</th>
+              <th>Rekening Tujuan</th>
+              <th>Waktu Daftar</th>
+              <th>Status Akun</th>
+              <th>Tindakan</th>
+            </tr>
+          </thead>
+          <tbody id="mBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== Verifikasi kendaraan ===== -->
+    <section id="tab-vehicles" class="tab-panel hidden">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Unit Kendaraan</th>
+              <th>Mitra Pemilik</th>
+              <th>Plat Nomor</th>
+              <th>Tarif / Hari</th>
+              <th>Status Tayang</th>
+              <th>Tindakan</th>
+            </tr>
+          </thead>
+          <tbody id="vBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== Armada Milik Platform ===== -->
+    <section id="tab-platform-fleet" class="tab-panel hidden">
+      <div class="alert info" style="margin-bottom:16px;">
+        ℹ️ Kendaraan di bawah ini adalah milik platform langsung. Pendapatan sewa masuk <b>100% untuk platform</b> tanpa potongan komisi mitra, dan pesanan otomatis langsung disetujui.
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Unit Kendaraan</th>
+              <th>Plat Nomor</th>
+              <th>Tarif Sewa</th>
+              <th>Status</th>
+              <th>Ketersediaan</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="pfBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== Pesanan & pembayaran ===== -->
+    <section id="tab-orders" class="tab-panel hidden">
+      <div class="toolbar">
+        <div class="field">
+          <label for="oFilter">Filter Status Pesanan</label>
+          <select id="oFilter" onchange="renderOrders()">
+            <option value="">Semua Status</option>
+            <option value="menunggu_mitra">Menunggu Mitra</option>
+            <option value="menunggu_bayar">Menunggu Pembayaran</option>
+            <option value="dibayar">Sudah Dibayar</option>
+            <option value="selesai">Selesai</option>
+            <option value="dibatalkan">Dibatalkan</option>
+            <option value="ditolak">Ditolak Mitra</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Kode</th>
+              <th>Penyewa</th>
+              <th>Unit Kendaraan</th>
+              <th>Tanggal Sewa</th>
+              <th class="right">Total Bayar</th>
+              <th class="right">Komisi</th>
+              <th>Status Pesanan</th>
+              <th>Status Bayar</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="oBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== Payout ===== -->
+    <section id="tab-payouts" class="tab-panel hidden">
+      <div class="alert info">
+        💳 Silakan lakukan transfer dana ke nomor rekening mitra tujuan, kemudian klik <b>Tandai Dibayar</b> untuk mencatat referensi pembayaran pada laporan akuntansi platform.
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Waktu Diajukan</th>
+              <th>Nama Mitra</th>
+              <th>Rekening Tujuan</th>
+              <th class="right">Nominal Payout</th>
+              <th>Status</th>
+              <th>Catatan / Ref</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="pBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== Pelanggan ===== -->
+    <section id="tab-customers" class="tab-panel hidden">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nama Lengkap</th>
+              <th>Email</th>
+              <th>No. WhatsApp / HP</th>
+              <th>Terdaftar Sejak</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="cBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== Pengaturan ===== -->
+    <section id="tab-settings" class="tab-panel hidden">
+      <div class="card" style="max-width:540px;">
+        <h3 style="margin-top:0;">Persentase Komisi Platform</h3>
+        <p class="muted">
+          Persentase ini akan dipotong secara otomatis dari setiap transaksi sewa kendaraan mitra yang berhasil lunas sebagai pendapatan operasional platform. Sisa dana menjadi hak saldo mitra.
+        </p>
+        <form id="setForm" class="toolbar" style="margin-top:16px;">
+          <div class="field" style="flex:1;">
+            <label for="sComm">Besaran Komisi (%)</label>
+            <input type="number" id="sComm" min="0" max="50" step="0.5" required>
+          </div>
+          <button class="btn ok" type="submit">Simpan Pengaturan</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div id="modalRoot"></div>
+  <script src="/js/api.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

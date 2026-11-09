@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Mitra - RentalKu</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="nav"></div>
+  <main class="container">
+    <h1>Dashboard Mitra</h1>
+    <div id="pendingAlert"></div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="tabs">
+      <button class="tab-btn" data-tab="vehicles">Kendaraan Saya</button>
+      <button class="tab-btn" data-tab="orders">Pesanan Masuk</button>
+      <button class="tab-btn" data-tab="payouts">Penarikan Dana</button>
+    </div>
+
+    <section id="tab-vehicles" class="tab-panel">
+      <div class="toolbar"><button class="btn" onclick="vehicleForm()">+ Tambah Kendaraan</button></div>
+      <div class="table-wrap"><table><thead><tr><th>Kendaraan</th><th>Plat</th><th>Harga/hari</th><th>Status</th><th>Tersedia</th><th>Aksi</th></tr></thead><tbody id="vBody"></tbody></table></div>
+    </section>
+
+    <section id="tab-orders" class="tab-panel hidden">
+      <div class="table-wrap"><table><thead><tr><th>Kode</th><th>Pelanggan</th><th>Kendaraan</th><th>Tanggal</th><th>Total</th><th>Bagian Anda</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="oBody"></tbody></table></div>
+    </section>
+
+    <section id="tab-payouts" class="tab-panel hidden">
+      <div class="card" style="margin-bottom:16px">
+        <h3>Ajukan Penarikan</h3>
+        <p class="muted">Saldo bisa ditarik setelah pesanan ditandai <b>Selesai</b>. Dana ditransfer admin ke rekening: <b id="bankInfo"></b></p>
+        <div class="toolbar"><div class="field"><label for="payAmount">Jumlah (Rp)</label><input type="number" id="payAmount" min="10000" step="1000"></div><button class="btn" onclick="requestPayout()">Ajukan</button></div>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Jumlah</th><th>Status</th><th>Catatan</th></tr></thead><tbody id="pBody"></tbody></table></div>
+    </section>
+  </main>
+  <div id="modalRoot"></div>
+  <script src="/js/api.js"></script>
+  <script src="/js/mitra.js"></script>
+</body>
+</html>

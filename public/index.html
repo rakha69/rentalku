@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RentalKu - Sewa Mobil &amp; Motor Terbaik dan Terpercaya</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="nav"></div>
+  <main class="container">
+    <section class="hero">
+      <div class="hero-badges">
+        <span class="hero-badge">🛡️ Mitra Terverifikasi</span>
+        <span class="hero-badge">💳 Pembayaran Aman &amp; Otomatis</span>
+        <span class="hero-badge">⚡ Konfirmasi Cepat</span>
+        <span class="hero-badge">✨ Unit Bersih &amp; Terawat</span>
+      </div>
+      <h1>Sewa Mobil &amp; Motor Jadi Lebih Nyaman</h1>
+      <p>Jelajahi berbagai pilihan armada terbaik untuk liburan, perjalanan bisnis, atau mobilitas harian Anda dengan
+        harga transparan tanpa biaya tersembunyi.</p>
+
+      <form class="filters" id="filterForm">
+        <div>
+          <label for="q">Cari Kendaraan</label>
+          <input id="q" placeholder="Avanza, Brio, NMAX...">
+        </div>
+        <div>
+          <label for="type">Jenis</label>
+          <select id="type">
+            <option value="">Semua Jenis</option>
+            <option value="mobil">Mobil</option>
+            <option value="motor">Motor</option>
+          </select>
+        </div>
+        <div>
+          <label for="transmission">Transmisi</label>
+          <select id="transmission">
+            <option value="">Semua</option>
+            <option value="Otomatis">Otomatis (Matic)</option>
+            <option value="Manual">Manual</option>
+          </select>
+        </div>
+        <div>
+          <label for="seats">Kapasitas Kursi</label>
+          <select id="seats">
+            <option value="">Semua</option>
+            <option value="4">2 - 4 Kursi</option>
+            <option value="5">5 Kursi</option>
+            <option value="7">7 Kursi ke atas</option>
+          </select>
+        </div>
+        <div>
+          <label for="start">Tanggal Mulai</label>
+          <input type="date" id="start">
+        </div>
+        <div>
+          <label for="end">Tanggal Kembali</label>
+          <input type="date" id="end">
+        </div>
+        <div>
+          <label for="sort">Urutkan</label>
+          <select id="sort">
+            <option value="">Terbaru</option>
+            <option value="price_asc">Harga Terendah</option>
+            <option value="price_desc">Harga Tertinggi</option>
+            <option value="rating_desc">Rating Tertinggi</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn block" type="submit" style="flex:2">Cari</button>
+          <button class="btn ghost block" type="button" id="btnReset" style="flex:1" title="Reset filter">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <div
+      style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px;">
+      <h2 id="resultTitle" style="margin:0">Kendaraan Tersedia</h2>
+      <div id="filterSummary" class="muted"></div>
+    </div>
+
+    <div id="list" class="grid"></div>
+
+    <!-- Section Mengapa Sewa di RentalKu (Ala Traveloka) -->
+    <section class="why-section">
+      <h2 class="why-title">Mengapa sewa kendaraan di RentalKu?</h2>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon" style="background:#e0f2fe; color:#0284c7;">⏱️</div>
+          <h3>Hemat Waktu</h3>
+          <p>Sewa mobil &amp; motor cukup di genggaman Anda kapan saja. Bandingkan pilihan armada mitra terpercaya dengan mudah tanpa ribet.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon" style="background:#dcfce7; color:#16a34a;">🛡️</div>
+          <h3>Mitra &amp; Unit Terpercaya</h3>
+          <p>Seluruh mitra dan armada kendaraan telah melewati verifikasi dokumen resmi demi kenyamanan dan keamanan perjalanan Anda.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon" style="background:#fef3c7; color:#d97706;">⭐</div>
+          <h3>Rating &amp; Ulasan Asli</h3>
+          <p>Transparansi ulasan asli dari pengguna sebelumnya membantu Anda menentukan pilihan kendaraan yang paling tepat dan terawat.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon" style="background:#ede9fe; color:#7c3aed;">💳</div>
+          <h3>Pembayaran Fleksibel</h3>
+          <p>Dukungan pembayaran lengkap via QRIS, Virtual Account Bank besar, hingga e-Wallet dengan konfirmasi instan lewat Payment Gateway.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="modalRoot"></div>
+
+  <!-- Footer Modern & Partner Pembayaran -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h2>
+            <span style="font-size:1.8rem;">🚗</span>
+            <span>Rental<span style="color:#60a5fa">Ku</span></span>
+          </h2>
+          <p>Platform marketplace sewa mobil dan sepeda motor terpercaya. Menghubungkan mitra pemilik kendaraan dengan pelanggan secara aman, transparan, dan bergaransi.</p>
+          <div class="footer-meta">
+            <span>📍 Layanan Seluruh Kota</span>
+            <span>🕒 Layanan 24/7</span>
+            <span>🔒 Pembayaran Terproteksi</span>
+          </div>
+        </div>
+
+        <div class="payment-section">
+          <h3>Partner Metode Pembayaran</h3>
+          <div class="payment-grid">
+            <div class="payment-card" title="QRIS"><span class="p-qris">QRIS</span></div>
+            <div class="payment-card" title="BCA Virtual Account"><span class="p-bca">BCA</span></div>
+            <div class="payment-card" title="Bank Mandiri"><span class="p-mandiri">mandırı</span></div>
+            <div class="payment-card" title="BNI Virtual Account"><span class="p-bni">BNI</span></div>
+            <div class="payment-card" title="Bank BRI"><span class="p-bri">BRI</span></div>
+            <div class="payment-card" title="Permata Bank"><span class="p-permata">Permata</span></div>
+            <div class="payment-card" title="CIMB Niaga"><span class="p-cimb">CIMB</span></div>
+            <div class="payment-card" title="GoPay"><span class="p-gopay">gopay</span></div>
+            <div class="payment-card" title="OVO"><span class="p-ovo">OVO</span></div>
+            <div class="payment-card" title="ShopeePay"><span class="p-shopee">Shopee</span></div>
+            <div class="payment-card" title="Alfamart"><span class="p-alfa">Alfamart</span></div>
+            <div class="payment-card" title="Indomaret"><span class="p-indo">Indomaret</span></div>
+            <div class="payment-card" title="Visa"><span class="p-visa">VISA</span></div>
+            <div class="payment-card" title="Mastercard"><span class="p-mc">mastercard</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 RentalKu Platform. Digital Entrepreneurship Kelompok 3. Seluruh hak cipta dilindungi.</div>
+        <div>
+          <a href="/index.html">Katalog Armada</a> &middot;
+          <a href="/login.html">Gabung Jadi Mitra</a> &middot;
+          <a href="/bookings.html">Cek Pesanan</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/index.js"></script>
+</body>
+
+</html>
