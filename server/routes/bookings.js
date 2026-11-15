@@ -28,9 +28,17 @@ const BASE = `
   JOIN users c ON c.id = b.customer_id
   JOIN users o ON o.id = v.owner_id`;
 
+function maskDocuments(row) {
+  const { sim, ...rest } = row;
+  const nik = typeof rest.nik === 'string' && /^\d{16}$/.test(rest.nik)
+    ? `${rest.nik.slice(0, 4)}********${rest.nik.slice(-4)}`
+    : null;
+  return { ...rest, nik };
+}
+
 function forCustomer(row) {
   const { commission_amount, commission_percent, partner_amount, midtrans_token, gateway_order_id, ...rest } = row;
-  return rest;
+  return maskDocuments(rest);
 }
 
 const plusMinutes = (m) => new Date(Date.now() + m * 60000).toISOString();
@@ -54,7 +62,15 @@ router.get('/quote', (req, res) => {
 // ---------- Buat pesanan ----------
 router.post('/', auth('pelanggan'), (req, res) => {
   expireBookings();
-  const { vehicle_id, start_date, end_date, driver_option, pickup_location, id_card_number, driver_license_number, notes } = req.body || {};
+  const { vehicle_id, start_date, end_date, driver_option, pickup_location, nik, sim, notes } = req.body || {};
+  const cleanNik = typeof nik === 'string' ? nik.trim() : '';
+  const cleanSim = typeof sim === 'string' ? sim.trim() : '';
+  if (!/^\d{16}$/.test(cleanNik)) {
+    return res.status(400).json({ error: 'NIK wajib diisi dengan tepat 16 digit angka.' });
+  }
+  if (cleanSim.length < 8) {
+    return res.status(400).json({ error: 'Nomor SIM wajib diisi dan minimal 8 karakter.' });
+  }
   const v = db
     .prepare(`SELECT v.*, u.role AS owner_role FROM vehicles v JOIN users u ON u.id=v.owner_id
               WHERE v.id = ? AND v.status='tayang' AND v.is_available = 1`)
@@ -72,11 +88,11 @@ router.post('/', auth('pelanggan'), (req, res) => {
   const expires = autoAccept ? plusMinutes(60) : plusMinutes(24 * 60);
   const info = db
     .prepare(`INSERT INTO bookings (code,customer_id,vehicle_id,start_date,end_date,days,price_per_day,total_price,
-                commission_percent,commission_amount,partner_amount,status,expires_at,driver_option,driver_fee,pickup_location,id_card_number,driver_license_number,notes)
+                commission_percent,commission_amount,partner_amount,status,expires_at,driver_option,driver_fee,pickup_location,nik,sim,notes)
               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
     .run(makeCode(), req.user.id, v.id, start_date, end_date, q.days, q.price_per_day, q.total_price,
       q.commission_percent, q.commission_amount, q.partner_amount, status, expires,
-      q.driver_option, q.total_driver_fee, pickup_location || null, id_card_number || null, driver_license_number || null, notes || null);
+      q.driver_option, q.total_driver_fee, pickup_location || null, cleanNik, cleanSim, notes || null);
   const row = db.prepare(`${BASE} WHERE b.id = ?`).get(info.lastInsertRowid);
   res.status(201).json(forCustomer(row));
 });
@@ -93,7 +109,7 @@ router.get('/mine', auth('pelanggan'), (req, res) => {
 router.get('/partner', auth('mitra', 'admin'), (req, res) => {
   expireBookings();
   const rows = db.prepare(`${BASE} WHERE v.owner_id = ? ORDER BY b.id DESC`).all(req.user.id);
-  res.json(rows);
+  res.json(rows.map(maskDocuments));
 });
 
 function loadBooking(id) {
@@ -149,3 +165,5 @@ router.post('/:id/review', auth('pelanggan'), (req, res) => {
 
 module.exports = router;
 module.exports.BASE = BASE;
+module.exports.forCustomer = forCustomer;
+module.exports.maskDocuments = maskDocuments;

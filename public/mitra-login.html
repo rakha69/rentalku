@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/img/logo.png">
+  <title>Portal Mitra - Masuk / Daftar Pemilik Armada RentalKu</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="nav"></div>
+  <main class="container">
+    <div class="auth-box card" style="max-width:500px; margin:20px auto 40px; box-shadow:var(--shadow-lg); border-radius:var(--radius-lg); padding:28px 24px;">
+      <div style="text-align:center; margin-bottom:20px;">
+        <span class="badge b-yellow" style="font-size:0.78rem; font-weight:700; margin-bottom:8px; display:inline-block; padding:4px 12px;">🤝 Portal Kemitraan Armada</span>
+        <h2 style="margin-bottom:6px;">Mitra Pemilik RentalKu</h2>
+        <p class="muted" style="margin:0; font-size:0.9rem;">Kelola armada kendaraan Anda, pantau pesanan sewa pelanggan, dan dapatkan penghasilan transparan.</p>
+      </div>
+
+      <div class="tabs" style="justify-content:center; margin-bottom:20px;">
+        <button class="tab-btn active" data-tab="login" style="padding:10px 24px; font-size:1rem;">Masuk Mitra</button>
+        <button class="tab-btn" data-tab="register" style="padding:10px 24px; font-size:1rem;">Daftar Jadi Mitra</button>
+      </div>
+
+      <!-- Tab Masuk Mitra -->
+      <div id="tab-login" class="tab-panel">
+        <form id="mitraLoginForm">
+          <div class="field">
+            <label for="mEmail">Alamat Email Mitra</label>
+            <input type="email" id="mEmail" placeholder="nama@email.com" required>
+          </div>
+          <div class="field">
+            <label for="mPass">Kata Sandi (Password)</label>
+            <div class="password-wrap">
+              <input type="password" id="mPass" placeholder="Masukkan kata sandi" required>
+              <button type="button" class="btn-toggle-pass" onclick="togglePass('mPass', this)" title="Lihat/Sembunyikan Password">👁️</button>
+            </div>
+          </div>
+          <button class="btn ok block" type="submit" style="padding:12px; font-size:1rem; margin-top:8px;">Masuk ke Dashboard Mitra &rarr;</button>
+        </form>
+
+        <div class="card" style="margin-top:20px; background:#fffbeb; border:1px dashed #f59e0b; padding:14px 16px;">
+          <div style="font-weight:700; font-size:0.85rem; color:#b45309; margin-bottom:6px;">⚡ Akun Cepat Pengujian (Mitra):</div>
+          <div style="font-size:0.82rem; line-height:1.6; color:#92400e;">
+            <div>&bull; <b>Email:</b> <code>mitra@rental.test</code> / <b>Pass:</b> <code>mitra123</code></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Daftar Mitra Baru -->
+      <div id="tab-register" class="tab-panel hidden">
+        <form id="mitraRegForm">
+          <div class="field">
+            <label for="mrName">Nama Pemilik / Nama Usaha</label>
+            <input id="mrName" placeholder="Sesuai KTP / Nama Rental Anda" required minlength="3">
+          </div>
+          <div class="field">
+            <label for="mrEmail">Alamat Email Bisnis / Pribadi</label>
+            <input type="email" id="mrEmail" placeholder="nama@email.com" required>
+          </div>
+          <div class="field">
+            <label for="mrPhone">Nomor WhatsApp Aktif</label>
+            <input id="mrPhone" placeholder="Contoh: 081234567890" required>
+          </div>
+          <div class="field">
+            <label for="mrPass">Kata Sandi (Min. 6 Karakter)</label>
+            <div class="password-wrap">
+              <input type="password" id="mrPass" placeholder="Buat kata sandi akun mitra" required minlength="6">
+              <button type="button" class="btn-toggle-pass" onclick="togglePass('mrPass', this)" title="Lihat/Sembunyikan Password">👁️</button>
+            </div>
+          </div>
+
+          <div style="background:#f8fafc; border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:16px;">
+            <div style="font-weight:700; font-size:0.85rem; color:var(--text); margin-bottom:4px;">💳 Rekening Bank Pencairan Dana:</div>
+            <div class="muted" style="font-size:0.78rem; margin-bottom:10px;">Diperlukan untuk penyaluran penarikan dana penghasilan sewa Anda secara otomatis.</div>
+            <div class="field" style="margin-bottom:10px;">
+              <label for="mrBank">Nama Bank</label>
+              <input id="mrBank" placeholder="BCA / Mandiri / BNI / BRI" required>
+            </div>
+            <div class="field" style="margin-bottom:0;">
+              <label for="mrRek">Nomor Rekening</label>
+              <input id="mrRek" placeholder="Contoh: 1234567890" required>
+            </div>
+          </div>
+
+          <div style="font-size:0.8rem; color:#64748b; margin-bottom:14px; line-height:1.4;">
+            ℹ️ <i>Pendaftaran mitra baru akan ditinjau dan diverifikasi oleh Administrator sebelum unit kendaraan dapat ditayangkan secara publik.</i>
+          </div>
+
+          <button class="btn ok block" type="submit" style="padding:12px; font-size:1rem;">Daftar Akun Mitra &rarr;</button>
+        </form>
+      </div>
+
+      <!-- Portal Switch Links -->
+      <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border); font-size:0.85rem; text-align:center; display:flex; flex-direction:column; gap:8px;">
+        <div>
+          <span class="muted">Ingin menyewa kendaraan?</span>
+          <a href="/login.html" style="font-weight:700;">Masuk ke Portal Pelanggan &rarr;</a>
+        </div>
+        <div>
+          <span class="muted">Petugas Administrator?</span>
+          <a href="/admin-login.html" style="color:var(--muted); font-size:0.8rem;">Akses Portal Admin &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="modalRoot"></div>
+
+  <!-- Footer Modern & Partner Pembayaran -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h2>
+            <span style="font-size:1.8rem;">🚗</span>
+            <span>Rental<span style="color:#60a5fa">Ku</span></span>
+          </h2>
+          <p>Platform marketplace sewa mobil dan sepeda motor terpercaya. Menghubungkan mitra pemilik kendaraan dengan pelanggan secara aman, transparan, dan bergaransi.</p>
+          <div class="footer-meta">
+            <span>📍 Layanan Seluruh Kota</span>
+            <span>🕒 Layanan 24/7</span>
+            <span>🔒 Pembayaran Terproteksi</span>
+          </div>
+        </div>
+
+        <div class="payment-section">
+          <h3>Partner Metode Pembayaran</h3>
+          <div class="payment-grid">
+            <div class="payment-card" title="QRIS"><span class="p-qris">QRIS</span></div>
+            <div class="payment-card" title="BCA Virtual Account"><span class="p-bca">BCA</span></div>
+            <div class="payment-card" title="Bank Mandiri"><span class="p-mandiri">mandırı</span></div>
+            <div class="payment-card" title="BNI Virtual Account"><span class="p-bni">BNI</span></div>
+            <div class="payment-card" title="Bank BRI"><span class="p-bri">BRI</span></div>
+            <div class="payment-card" title="Permata Bank"><span class="p-permata">Permata</span></div>
+            <div class="payment-card" title="CIMB Niaga"><span class="p-cimb">CIMB</span></div>
+            <div class="payment-card" title="GoPay"><span class="p-gopay">gopay</span></div>
+            <div class="payment-card" title="OVO"><span class="p-ovo">OVO</span></div>
+            <div class="payment-card" title="ShopeePay"><span class="p-shopee">Shopee</span></div>
+            <div class="payment-card" title="Alfamart"><span class="p-alfa">Alfamart</span></div>
+            <div class="payment-card" title="Indomaret"><span class="p-indo">Indomaret</span></div>
+            <div class="payment-card" title="Visa"><span class="p-visa">VISA</span></div>
+            <div class="payment-card" title="Mastercard"><span class="p-mc">mastercard</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 RentalKu Platform. Digital Entrepreneurship Kelompok 3. Seluruh hak cipta dilindungi.</div>
+        <div>
+          <a href="/index.html">Katalog Armada</a> &middot;
+          <a href="/mitra-login.html">Gabung Jadi Mitra</a> &middot;
+          <a href="/admin-login.html">Portal Admin</a> &middot;
+          <a href="/bookings.html">Cek Pesanan</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/mitra-auth.js"></script>
+</body>
+</html>

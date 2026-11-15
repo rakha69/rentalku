@@ -68,6 +68,12 @@ CREATE TABLE IF NOT EXISTS bookings (
   paid_at TEXT,
   expires_at TEXT,
   cancel_reason TEXT,
+  driver_option TEXT,
+  driver_fee INTEGER NOT NULL DEFAULT 0,
+  pickup_location TEXT,
+  nik TEXT,
+  sim TEXT,
+  notes TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -96,6 +102,25 @@ CREATE TABLE IF NOT EXISTS settings (
   value TEXT NOT NULL
 );
 `);
+
+const bookingColumns = new Set(db.prepare('PRAGMA table_info(bookings)').all().map((column) => column.name));
+const bookingMigrations = [
+  ['driver_option', 'TEXT'],
+  ['driver_fee', 'INTEGER NOT NULL DEFAULT 0'],
+  ['pickup_location', 'TEXT'],
+  ['nik', 'TEXT'],
+  ['sim', 'TEXT'],
+  ['notes', 'TEXT'],
+];
+for (const [name, definition] of bookingMigrations) {
+  if (!bookingColumns.has(name)) db.exec(`ALTER TABLE bookings ADD COLUMN ${name} ${definition}`);
+}
+if (bookingColumns.has('id_card_number')) {
+  db.exec('UPDATE bookings SET nik = id_card_number WHERE nik IS NULL AND id_card_number IS NOT NULL');
+}
+if (bookingColumns.has('driver_license_number')) {
+  db.exec('UPDATE bookings SET sim = driver_license_number WHERE sim IS NULL AND driver_license_number IS NOT NULL');
+}
 
 // ---------- Data contoh (hanya saat database masih kosong) ----------
 function seed() {

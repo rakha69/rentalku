@@ -11,7 +11,7 @@
 const express = require('express');
 const db = require('../db');
 const { auth } = require('../middleware/auth');
-const { BASE } = require('./bookings');
+const { BASE, maskDocuments } = require('./bookings');
 const { expireBookings, getCommissionPercent } = require('../utils/helpers');
 
 const router = express.Router();
@@ -55,7 +55,7 @@ router.patch('/vehicles/:id/verify', (req, res) => {
 
 router.get('/bookings', (req, res) => {
   expireBookings();
-  res.json(db.prepare(`${BASE} ORDER BY b.id DESC`).all());
+  res.json(db.prepare(`${BASE} ORDER BY b.id DESC`).all().map(maskDocuments));
 });
 
 router.get('/settings', (req, res) => res.json({ commission_percent: getCommissionPercent() }));

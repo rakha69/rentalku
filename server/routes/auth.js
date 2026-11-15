@@ -35,7 +35,7 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  const { email, password } = req.body || {};
+  const { email, password, required_role } = req.body || {};
   if (!email || !password) return res.status(400).json({ error: 'Email dan password wajib diisi' });
   const user = db.prepare('SELECT * FROM users WHERE email = ?').get(String(email).toLowerCase());
   if (!user || !bcrypt.compareSync(password, user.password_hash)) {
@@ -43,6 +43,21 @@ router.post('/login', (req, res) => {
   }
   if (['nonaktif', 'ditolak'].includes(user.status)) {
     return res.status(403).json({ error: 'Akun tidak aktif. Hubungi admin.' });
+  }
+  if (required_role && user.role !== required_role) {
+    if (required_role === 'admin') {
+      return res.status(403).json({ error: 'Akses ditolak: Akun ini bukan akun Administrator.' });
+    }
+    if (required_role === 'mitra') {
+      return res.status(403).json({
+        error: `Akses ditolak: Akun ini bukan akun Mitra. Silakan masuk melalui Portal ${user.role === 'admin' ? 'Admin' : 'Pelanggan'}.`,
+      });
+    }
+    if (required_role === 'pelanggan') {
+      return res.status(403).json({
+        error: `Akses ditolak: Akun ini terdaftar sebagai ${user.role === 'admin' ? 'Administrator' : 'Mitra'}. Silakan masuk melalui Portal ${user.role === 'admin' ? 'Admin' : 'Mitra'}.`,
+      });
+    }
   }
   res.json({ token: sign(user), user: publicUser(user) });
 });

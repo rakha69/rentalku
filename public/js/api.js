@@ -16,7 +16,15 @@ function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
 }
-function logout() { clearSession(); location.href = '/'; }
+function logout() {
+  const u = getUser();
+  const wasAdmin = u && u.role === 'admin';
+  const wasMitra = u && u.role === 'mitra';
+  clearSession();
+  if (wasAdmin) location.href = '/admin-login.html';
+  else if (wasMitra) location.href = '/mitra-login.html';
+  else location.href = '/';
+}
 
 // Panggil API. Contoh: await api('/vehicles') atau await api('/bookings', {method:'POST', body:{...}})
 async function api(path, opts = {}) {
@@ -129,10 +137,10 @@ function renderNav() {
   const page = location.pathname.split('/').pop() || 'index.html';
   const link = (href, text, icon) => `
     <a class="link ${page === href ? 'active' : ''}" href="/${href}">
-      <span>${icon}</span> <span>${text}</span>
+      ${icon ? `<span>${icon}</span>` : ''} <span>${text}</span>
     </a>`;
 
-  let links = link('index.html', 'Katalog Armada', '🚗');
+  let links = link('index.html', 'Katalog Armada', '');
   if (u && u.role === 'pelanggan') links += link('bookings.html', 'Pesanan Saya', '📋');
   if (u && u.role === 'mitra') links += link('mitra.html', 'Dashboard Mitra', '🏢');
   if (u && u.role === 'admin') links += link('admin.html', 'Dashboard Admin', '⚙️');
@@ -148,6 +156,9 @@ function renderNav() {
       </div>
       <button class="btn sm ghost" onclick="logout()" style="border-radius:20px; padding:6px 14px;">Keluar</button>`
     : `
+      <a class="link" href="/mitra-login.html" style="font-weight:600; font-size:0.88rem; margin-right:6px; display:inline-flex; align-items:center; gap:4px;">
+        <span>🤝</span> <span>Portal Mitra</span>
+      </a>
       <a class="btn sm ok" href="/login.html" style="border-radius:20px; padding:8px 18px; font-weight:700;">
         Masuk / Daftar &rarr;
       </a>`;
@@ -156,7 +167,7 @@ function renderNav() {
     <nav class="nav">
       <div class="nav-inner">
         <a class="brand" href="/">
-          <div class="brand-logo-icon">🚗</div>
+          <img class="brand-logo" src="/img/logo.png" alt="" aria-hidden="true" onerror="this.remove()">
           <span>Rental<span style="color:var(--primary-accent)">Ku</span></span>
         </a>
         <div class="nav-links">${links}</div>
@@ -168,8 +179,19 @@ function renderNav() {
 // Paksa login & role tertentu untuk halaman dashboard
 function requireRole(...roles) {
   const u = getUser();
-  if (!u || !getToken()) { location.href = '/login.html?next=' + encodeURIComponent(location.pathname); return false; }
-  if (roles.length && !roles.includes(u.role)) { location.href = '/'; return false; }
+  if (!u || !getToken()) {
+    let target = '/login.html';
+    if (roles.includes('admin')) target = '/admin-login.html';
+    else if (roles.includes('mitra')) target = '/mitra-login.html';
+    location.href = target + '?next=' + encodeURIComponent(location.pathname);
+    return false;
+  }
+  if (roles.length && !roles.includes(u.role)) {
+    if (roles.includes('admin')) location.href = '/admin-login.html';
+    else if (roles.includes('mitra')) location.href = '/mitra-login.html';
+    else location.href = '/';
+    return false;
+  }
   return true;
 }
 

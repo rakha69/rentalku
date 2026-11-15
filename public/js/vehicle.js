@@ -129,12 +129,12 @@ async function init() {
 
           <div class="row">
             <div class="field">
-              <label for="idCard">Nomor KTP (NIK) <small class="muted">(Opsional)</small></label>
-              <input id="idCard" placeholder="16 digit NIK" maxlength="16">
+              <label for="idCard">Nomor KTP (NIK) <small class="muted">(Wajib)</small></label>
+              <input id="idCard" placeholder="16 digit NIK" maxlength="16" inputmode="numeric" required>
             </div>
             <div class="field">
-              <label for="driverLicense">Nomor SIM ${isCar ? 'A' : 'C'} <small class="muted">(Opsional)</small></label>
-              <input id="driverLicense" placeholder="Nomor SIM aktif">
+              <label for="driverLicense">Nomor SIM ${isCar ? 'A' : 'C'} <small class="muted">(Wajib)</small></label>
+              <input id="driverLicense" placeholder="Nomor SIM aktif" minlength="8" required>
             </div>
           </div>
 
@@ -251,6 +251,17 @@ async function book() {
     return;
   }
 
+  if (!/^\d{16}$/.test(idCard)) {
+    toast('NIK wajib diisi dengan tepat 16 digit angka.', 'error');
+    document.getElementById('idCard').focus();
+    return;
+  }
+  if (license.length < 8) {
+    toast('Nomor SIM wajib diisi dan minimal 8 karakter.', 'error');
+    document.getElementById('driverLicense').focus();
+    return;
+  }
+
   const btn = document.getElementById('bookBtn');
   btn.disabled = true;
   btn.textContent = 'Memproses Pesanan...';
@@ -264,8 +275,8 @@ async function book() {
         end_date: e,
         driver_option: driverOpt,
         pickup_location: pickup,
-        id_card_number: idCard,
-        driver_license_number: license,
+        nik: idCard,
+        sim: license,
         notes: notes,
       },
     });

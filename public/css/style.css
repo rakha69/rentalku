@@ -84,17 +84,13 @@ h3 { font-size: 1.15rem; }
   text-decoration: none;
 }
 .brand:hover { text-decoration: none; }
-.brand-logo-icon {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-accent) 100%);
-  color: #fff;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+.brand-logo {
+  display: block;
+  width: auto;
+  height: 32px;
+  max-width: 48px;
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 .nav-links { display: flex; gap: 6px; align-items: center; }
 .nav a.link {
@@ -219,6 +215,7 @@ input:focus, select:focus, textarea:focus {
   color: var(--primary);
 }
 .row { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.auth-box { max-width: 490px; margin: 24px auto 48px; width: 100%; }
 
 /* ---------- Kartu & Layout ---------- */
 .card {
